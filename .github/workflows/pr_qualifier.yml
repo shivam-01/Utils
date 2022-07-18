@@ -5,19 +5,33 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  
+  changedfiles:
     runs-on: ubuntu-latest
-
+    # Map a step output to a job output
+    outputs:
+      tests: ${{ steps.changes.outputs.ts }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v3
+        # Make sure we have some code to diff.
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Get changed files
+        id: changes
+        # Set outputs using the command.
+        run: |
+          echo "::set-output name=tests::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep test_*.py$ | xargs)"
+  
+  lintAndtest:
+    runs-on: ubuntu-latest
+    # require the first job to have ran
+    needs: changedfiles
+    # only run there are changed files
+    if: ${{needs.changedfiles.outputs.tests}}
+    steps:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest
-          pip install pytest-testmon
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with flake8
         run: |
@@ -27,5 +41,6 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
-          pytest --testmon
+          for test in ${{needs.changedfiles.outputs.tests}}:
+            pytest test
           
