@@ -8,9 +8,6 @@ jobs:
   
   changedfiles:
     runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      tests: ${{ steps.changes.outputs.tests }}
     steps:
         # Make sure we have some code to diff.
       - name: Checkout repository
@@ -28,7 +25,7 @@ jobs:
     # require the first job to have ran
     needs: changedfiles
     # only run there are changed files
-    if: ${{needs.changedfiles.outputs.tests}}
+    if: ${{ steps.changes.outputs.tests }}
     steps:
       - name: Install dependencies
         run: |
@@ -43,6 +40,6 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
-          for test in ${{needs.changedfiles.outputs.tests}}:
+          for test in ${{ steps.changes.outputs.tests }}:
             pytest test
           
