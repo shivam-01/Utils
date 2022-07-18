@@ -15,19 +15,11 @@ jobs:
         # Make sure we have some code to diff.
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Get changed files
         id: changes
         # Set outputs using the command.
         run: |
           echo "::set-output name=tests::$(git diff --name-only --diff-filter=ACMRT ${{github.event.pull_request.base.sha}} ${{ github.event.pull_request.head.sha }} | grep test_*.py)"
-          
-    needs:
-    steps:
-      -name: xyz
-        run: |
-          echo ${{needs.changedfiles.outputs.ts}}
   
   lintAndtest:
     runs-on: ubuntu-latest
