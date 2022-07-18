@@ -46,7 +46,6 @@ jobs:
       - name: Test with pytest
         run: |
           echo "pytest ${{needs.changedfiles.outputs.ts}}"
-          ls
-          python -m pytest ${{needs.changedfiles.outputs.ts}}
+          python -m pytest
 
           
