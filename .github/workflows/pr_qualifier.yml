@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
-      tests: ${{ steps.changes.outputs.ts }}
+      tests: ${{ steps.changes.outputs.tests }}
     steps:
         # Make sure we have some code to diff.
       - name: Checkout repository
