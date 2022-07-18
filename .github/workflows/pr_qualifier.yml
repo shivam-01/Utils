@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: echo changed files
         run: echo ${{needs.changedfiles.outputs.ts}}
+
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v3
       - name: Install dependencies
@@ -46,5 +48,3 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
-
-          
