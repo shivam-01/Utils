@@ -23,11 +23,11 @@ jobs:
         run: |
           echo "::set-output name=tests::$(git diff --name-only --diff-filter=ACMRT ${{github.event.pull_request.base.sha}} ${{ github.event.pull_request.head.sha }} | grep test_*.py)"
           
-      needs:
-      steps:
-        -name: xyz
-          run: |
-            echo ${{needs.changedfiles.outputs.ts}}
+    needs:
+    steps:
+      -name: xyz
+        run: |
+          echo ${{needs.changedfiles.outputs.ts}}
   
   lintAndtest:
     runs-on: ubuntu-latest
