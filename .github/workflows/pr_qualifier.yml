@@ -5,9 +5,12 @@ on:
     branches: [ master ]
 
 jobs:
-  
   changedfiles:
     runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      all: ${{ steps.changes.outputs.all}}
+      ts: ${{ steps.changes.outputs.ts }}
     steps:
         # Make sure we have some code to diff.
       - name: Checkout repository
@@ -18,28 +21,16 @@ jobs:
         id: changes
         # Set outputs using the command.
         run: |
-          echo "::set-output name=tests::$(git diff --name-only --diff-filter=AM ${{github.event.pull_request.base.sha}} ${{ github.event.pull_request.head.sha }} | grep test_*.py)"
-  
-  lintAndtest:
+          echo "::set-output name=all::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
+          echo "::set-output name=ts::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .py$ | xargs)"
+  lint:
     runs-on: ubuntu-latest
     # require the first job to have ran
     needs: changedfiles
     # only run there are changed files
-    if: ${{ steps.changes.outputs.tests }}
+    if: ${{needs.changedfiles.outputs.ts}}
     steps:
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Test with pytest
-        run: |
-          for test in ${{ steps.changes.outputs.tests }}:
-            pytest test
+      - name: echo changed files
+        run: echo ${{needs.changedfiles.outputs.ts}}
+
           
