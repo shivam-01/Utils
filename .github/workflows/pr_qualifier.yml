@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  Lint&Test:
+  LintTest:
     runs-on: ubuntu-latest
 
     steps:
