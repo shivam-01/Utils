@@ -1,4 +1,4 @@
-name: Test PR
+name: PR-testing-workflow
 
 on:
   pull_request:
@@ -20,9 +20,6 @@ jobs:
         id: changes
         run: |
           echo "::set-output name=tests::$(git diff --name-only --diff-filter=ACM ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "tests/*" | xargs)"
-          
-      - name: echo changed files
-        run: echo ${{steps.changes.outputs.tests}}
           
       - name: Set up Python
         uses: actions/setup-python@v3
