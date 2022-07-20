@@ -8,8 +8,9 @@ jobs:
 
   Lint&Test:
     runs-on: ubuntu-latest
-    
+
     steps:
+      
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -44,4 +45,3 @@ jobs:
         name: Test with pytest
         run: |
           pytest ${{steps.changes.outputs.tests}}
-          
