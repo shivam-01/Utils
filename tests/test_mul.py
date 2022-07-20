@@ -2,4 +2,4 @@ from utils.mul import mul
 
 
 def test_mul():
-    assert mul(1, 1) == 1
+    assert mul(2, 2) == 4
